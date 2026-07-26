@@ -1,0 +1,43 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <button
+      class="menu-button"
+      type="button"
+      aria-label="Open navigation"
+      aria-controls="site-navigation"
+      aria-expanded="false"
+      data-navigation-target="button"
+      data-action="navigation#toggle"
+    >
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+
+    <%= link_to root_path, class: "site-logo", aria: { label: "PM Company home" } do %>
+      <svg viewBox="0 0 48 58" role="img" aria-hidden="true">
+        <rect class="site-logo__outline" x="4" y="2" width="40" height="54" rx="3" />
+        <% [ 10, 21, 32 ].each do |x| %>
+          <% [ 9, 22, 35 ].each do |y| %>
+            <rect class="site-logo__window" x="<%= x %>" y="<%= y %>" width="6" height="8" />
+          <% end %>
+        <% end %>
+        <rect class="site-logo__door" x="21" y="45" width="8" height="11" />
+        <path class="site-logo__accent" d="M21 53 29 45M21 49l4-4M25 56l4-4" />
+      </svg>
+    <% end %>
+  </div>
+
+  <nav
+    id="site-navigation"
+    class="navigation-drawer"
+    aria-label="Primary navigation"
+    data-navigation-target="drawer"
+    data-action="keydown.esc@window->navigation#close click@window->navigation#dismiss"
+    hidden
+  >
+    <div class="navigation-drawer__inner">
+      <%= link_to "All Buildings", buildings_path, class: "navigation-drawer__link" %>
+    </div>
+  </nav>
+</header>

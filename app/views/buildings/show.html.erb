@@ -1,0 +1,8 @@
+<% content_for :title, "#{@building.name} | PM Company" %>
+
+<article class="building-detail">
+  <p class="building-detail__back"><%= link_to "← All Buildings", buildings_path %></p>
+  <h1><%= @building.name %></h1>
+  <p class="building-detail__neighborhood"><%= @building.neighborhood %></p>
+  <p><%= @building.description %></p>
+</article>

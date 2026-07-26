@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Building Pages" %></title>
+    <title><%= content_for(:title) || "PM Company" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#f7f7f5">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Building Pages">
+    <meta name="application-name" content="PM Company">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -23,7 +24,13 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body data-controller="navigation">
+    <%= render "shared/header" %>
+
+    <main id="main-content">
+      <%= yield %>
+    </main>
+
+    <%= render "shared/footer" %>
   </body>
 </html>

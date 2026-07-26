@@ -1,0 +1,54 @@
+<% content_for :title, "Rental Buildings | PM Company" %>
+
+<div class="portfolio">
+  <% if @buildings.any? %>
+    <section
+      class="featured-gallery"
+      aria-label="<%= "#{@featured_building.name} featured gallery" %>"
+      data-controller="gallery"
+    >
+      <button
+        class="gallery-control gallery-control--previous"
+        type="button"
+        aria-label="View previous gallery images"
+        data-action="gallery#previous"
+      >
+        <span aria-hidden="true">‹</span>
+      </button>
+
+      <div class="gallery-track" data-gallery-target="track">
+        <% @featured_building.gallery_images.first(4).each_with_index do |image, index| %>
+          <figure class="gallery-panel">
+            <%= image_tag image,
+                          alt: "#{@featured_building.name} gallery view #{index + 1}",
+                          class: "gallery-panel__image",
+                          loading: index.zero? ? "eager" : "lazy" %>
+          </figure>
+        <% end %>
+      </div>
+
+      <button
+        class="gallery-control gallery-control--next"
+        type="button"
+        aria-label="View next gallery images"
+        data-action="gallery#next"
+      >
+        <span aria-hidden="true">›</span>
+      </button>
+    </section>
+
+    <section class="buildings-section" aria-labelledby="rental-buildings-heading">
+      <h1 id="rental-buildings-heading">Rental Buildings</h1>
+
+      <div class="building-grid">
+        <%= render partial: "building", collection: @buildings %>
+      </div>
+    </section>
+  <% else %>
+    <section class="portfolio-empty" aria-labelledby="portfolio-empty-heading">
+      <div class="portfolio-empty__mark" aria-hidden="true">⌂</div>
+      <h1 id="portfolio-empty-heading">No buildings are currently available</h1>
+      <p>Our portfolio is being updated. Please check back soon for new rental buildings.</p>
+    </section>
+  <% end %>
+</div>

@@ -1,0 +1,22 @@
+<article class="building-card">
+  <div class="building-card__media">
+    <% if building.cover_image.attached? %>
+      <%= image_tag building.cover_image,
+                    alt: "#{building.name} exterior",
+                    class: "building-card__image",
+                    loading: "lazy" %>
+    <% else %>
+      <div class="building-card__placeholder" role="img" aria-label="<%= "#{building.name} image unavailable" %>">
+        <span aria-hidden="true">⌂</span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="building-card__content">
+    <div>
+      <h2 class="building-card__name"><%= building.name %></h2>
+      <p class="building-card__neighborhood"><%= building.neighborhood %></p>
+    </div>
+    <%= link_to "See Apartments", building_path(building), class: "button" %>
+  </div>
+</article>
