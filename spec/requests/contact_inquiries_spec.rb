@@ -95,6 +95,10 @@ RSpec.describe "Contact inquiries", type: :request do
       )
       expect(page).to have_css("[role='alert']", text: "Email is invalid")
       expect(page).to have_css("#contact-inquiry-email-error", text: "Email is invalid")
+      expect(page.find_field("Email", visible: :all)[:"aria-invalid"]).to eq("true")
+      expect(page.find_field("Email", visible: :all)[:"aria-describedby"]).to eq(
+        "contact-inquiry-email-error"
+      )
       expect(page).to have_text("12A")
     end
 

@@ -1,13 +1,19 @@
 <article class="building-card">
   <div class="building-card__media">
     <% if building.cover_image.attached? %>
-      <%= image_tag building.cover_image,
+      <%= image_tag building.cover_image.variant(
+                      resize_to_fill: [ 640, 500 ],
+                      saver: { quality: 82, strip: true }
+                    ),
                     alt: "#{building.name} exterior",
                     class: "building-card__image",
+                    width: 640,
+                    height: 500,
+                    decoding: "async",
                     loading: "lazy" %>
     <% else %>
       <div class="building-card__placeholder" role="img" aria-label="<%= "#{building.name} image unavailable" %>">
-        <span aria-hidden="true">⌂</span>
+        <span aria-hidden="true">&#8962;</span>
       </div>
     <% end %>
   </div>

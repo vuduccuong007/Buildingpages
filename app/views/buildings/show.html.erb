@@ -7,9 +7,16 @@
 >
   <section class="building-hero" aria-label="<%= "#{@building.name} exterior" %>">
     <% if @building.cover_image.attached? %>
-      <%= image_tag @building.cover_image,
+      <%= image_tag @building.cover_image.variant(
+                      resize_to_fill: [ 1800, 1000 ],
+                      saver: { quality: 84, strip: true }
+                    ),
                     alt: "#{@building.name} exterior",
-                    class: "building-hero__image" %>
+                    class: "building-hero__image",
+                    width: 1800,
+                    height: 1000,
+                    loading: "eager",
+                    fetchpriority: "high" %>
     <% else %>
       <div class="building-hero__placeholder" role="img" aria-label="<%= "#{@building.name} image unavailable" %>">
         <span>Image unavailable</span>
@@ -18,8 +25,10 @@
   </section>
 
   <section class="building-description" aria-labelledby="building-description-heading">
-    <h1 id="building-description-heading"><%= @building.name %></h1>
-    <p class="building-description__address"><%= @building.full_address %></p>
+    <div class="building-description__intro">
+      <h1 id="building-description-heading"><%= @building.name %></h1>
+      <p class="building-description__address"><%= @building.full_address %></p>
+    </div>
     <% if @building.description.present? %>
       <div class="building-description__copy">
         <%= simple_format(@building.description) %>

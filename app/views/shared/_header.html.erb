@@ -1,4 +1,6 @@
-<header class="site-header">
+<% building_header = defined?(@building) && @building.present? %>
+
+<header class="site-header<%= " site-header--building" if building_header %>">
   <div class="site-header__inner">
     <button
       class="menu-button"
@@ -15,7 +17,7 @@
     </button>
 
     <%= link_to root_path, class: "site-logo", aria: { label: "PM Company home" } do %>
-      <svg viewBox="0 0 48 58" role="img" aria-hidden="true">
+      <svg viewBox="0 0 48 58" aria-hidden="true" focusable="false">
         <rect class="site-logo__outline" x="4" y="2" width="40" height="54" rx="3" />
         <% [ 10, 21, 32 ].each do |x| %>
           <% [ 9, 22, 35 ].each do |y| %>
@@ -27,7 +29,7 @@
       </svg>
     <% end %>
 
-    <% if defined?(@building) && @building.present? %>
+    <% if building_header %>
       <div class="site-header__building">
         <p class="site-header__building-name"><%= @building.name %></p>
         <p class="site-header__building-meta">

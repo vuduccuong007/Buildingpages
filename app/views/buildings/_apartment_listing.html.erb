@@ -1,9 +1,15 @@
 <article class="listing-card" id="apartment-listing-<%= apartment_listing.id %>">
   <div class="listing-card__media">
     <% if apartment_listing.photo.attached? %>
-      <%= image_tag apartment_listing.photo,
+      <%= image_tag apartment_listing.photo.variant(
+                      resize_to_fill: [ 700, 560 ],
+                      saver: { quality: 82, strip: true }
+                    ),
                     alt: "#{@building.name} apartment #{apartment_listing.unit_number}",
                     class: "listing-card__image",
+                    width: 700,
+                    height: 560,
+                    decoding: "async",
                     loading: "lazy" %>
     <% else %>
       <div class="listing-card__placeholder" role="img" aria-label="Apartment image unavailable">
@@ -14,14 +20,20 @@
 
   <div class="listing-card__content">
     <div>
+      <p class="listing-card__transaction">
+        <%= apartment_listing.rent? ? "For Rent" : "For Sale" %>
+      </p>
       <h3 class="listing-card__unit"><%= apartment_listing.unit_number %></h3>
       <p class="listing-card__price">
+        <span class="visually-hidden">Price:</span>
         <%= number_to_currency(
               apartment_listing.price_cents / 100.0,
               precision: apartment_listing.price_cents.remainder(100).zero? ? 0 : 2
             ) %>
         <% if apartment_listing.rent? %>
-          <span class="listing-card__cadence">Monthly</span>
+          <span class="listing-card__cadence">Per month</span>
+        <% else %>
+          <span class="listing-card__cadence">Asking price</span>
         <% end %>
       </p>
       <p class="listing-card__rooms">
@@ -44,6 +56,7 @@
     <button
       class="button listing-card__action"
       type="button"
+      aria-label="<%= "Schedule a visit for apartment #{apartment_listing.unit_number}" %>"
       data-action="contact-inquiry#open"
       data-contact-inquiry-listing-id-param="<%= apartment_listing.id %>"
       data-contact-inquiry-unit-param="<%= apartment_listing.unit_number %>"

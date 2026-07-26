@@ -16,9 +16,11 @@ export default class extends Controller {
     if (!panel) return
 
     const gap = parseFloat(getComputedStyle(this.trackTarget).columnGap) || 0
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
     this.trackTarget.scrollBy({
       left: direction * (panel.getBoundingClientRect().width + gap),
-      behavior: "smooth"
+      behavior: reduceMotion ? "auto" : "smooth"
     })
   }
 }

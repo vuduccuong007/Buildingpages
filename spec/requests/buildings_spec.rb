@@ -1,6 +1,18 @@
 require "rails_helper"
 
 RSpec.describe "Buildings", type: :request do
+  def attach_test_image(record, attachment_name, filename:)
+    path = Rails.root.join("db/seeds/assets/galleries/galleries-01.jpg")
+
+    path.open("rb") do |file|
+      record.public_send(attachment_name).attach(
+        io: file,
+        filename:,
+        content_type: "image/jpeg"
+      )
+    end
+  end
+
   describe "GET /buildings" do
     it "returns a successful response" do
       get buildings_path
@@ -48,6 +60,45 @@ RSpec.describe "Buildings", type: :request do
 
       expect(response.body).not_to include("INACTIVE-14A")
       expect(response.body).not_to include("9876")
+    end
+
+    it "optimizes gallery and card images without deferring the primary gallery image" do
+      building = create(:building, name: "Image House")
+      attach_test_image(building, :cover_image, filename: "cover.jpg")
+      attach_test_image(building, :gallery_images, filename: "gallery-1.jpg")
+      attach_test_image(building, :gallery_images, filename: "gallery-2.jpg")
+
+      get buildings_path
+
+      page = Capybara.string(response.body)
+      gallery_images = page.all(".gallery-panel__image")
+      primary_gallery_image = gallery_images.first
+      building_image = page.find(".building-card__image")
+
+      expect(page).to have_css("#featured-gallery-track[tabindex='0']")
+      expect(page).to have_css("button[aria-label='View previous gallery image']")
+      expect(page).to have_css("button[aria-label='View next gallery image']")
+      expect(primary_gallery_image[:loading]).to eq("eager")
+      expect(primary_gallery_image[:fetchpriority]).to eq("high")
+      expect(primary_gallery_image[:width]).to eq("640")
+      expect(primary_gallery_image[:height]).to eq("1000")
+      expect(gallery_images.last[:loading]).to eq("lazy")
+      expect(building_image[:loading]).to eq("lazy")
+      expect(building_image[:width]).to eq("640")
+      expect(building_image[:height]).to eq("500")
+    end
+
+    it "renders a graceful gallery placeholder when the featured building has no gallery image" do
+      building = create(:building, name: "No Gallery House")
+
+      get buildings_path
+
+      page = Capybara.string(response.body)
+
+      expect(page).to have_css(
+        ".gallery-panel--placeholder[aria-label='#{building.name} gallery image unavailable']"
+      )
+      expect(page).not_to have_css(".gallery-control")
     end
   end
 
@@ -236,17 +287,21 @@ RSpec.describe "Buildings", type: :request do
       expect(rental_section).to have_text("Apartments for Rent")
       expect(rental_section).to have_text("RENT-4B")
       expect(rental_section).to have_text("$4,250")
-      expect(rental_section).to have_text("Monthly")
+      expect(rental_section).to have_text("For Rent")
+      expect(rental_section).to have_text("Per month")
       expect(rental_section).to have_text("Studio")
       expect(rental_section.text).to match(/1\.5\s+Bathrooms/)
       expect(rental_section).to have_button("Schedule a Visit", disabled: false)
+      expect(rental_section).to have_css(
+        "button[aria-label='Schedule a visit for apartment RENT-4B']"
+      )
       expect(rental_section).to have_link("Use inquiry form", href: "#contact-inquiry-form")
       expect(rental_section).to have_css(
         "button[data-contact-inquiry-listing-id-param='#{listing.id}']"
       )
     end
 
-    it "renders active sales in the sale section without a monthly label" do
+    it "renders active sales with an unambiguous asking-price label" do
       building = create(:building)
       create(
         :apartment_listing,
@@ -262,9 +317,11 @@ RSpec.describe "Buildings", type: :request do
       sale_section = page.find("section[aria-labelledby='sale-listings-heading']")
 
       expect(sale_section).to have_text("Apartments for Sale")
+      expect(sale_section).to have_text("For Sale")
       expect(sale_section).to have_text("SALE-12A")
       expect(sale_section).to have_text("$1,250,000")
-      expect(sale_section).not_to have_text("Monthly")
+      expect(sale_section).to have_text("Asking price")
+      expect(sale_section).not_to have_text("Per month")
     end
 
     it "excludes inactive listings" do
@@ -339,13 +396,38 @@ RSpec.describe "Buildings", type: :request do
 
       page = Capybara.string(response.body)
 
-      expect(page).to have_css("dialog#contact-inquiry-form", count: 1)
+      expect(page).to have_css(
+        "dialog#contact-inquiry-form[aria-labelledby='contact-inquiry-heading']",
+        count: 1
+      )
       expect(page).to have_css("dialog#contact-inquiry-form[open]")
+      expect(page).to have_css("h2#contact-inquiry-heading", text: "Contact us about an apartment")
       expect(page).to have_css("noscript select[name='apartment_listing_id']")
       expect(page).to have_field("Name", visible: :all)
       expect(page).to have_field("Email", visible: :all)
       expect(page).to have_field("Phone (optional)", visible: :all)
       expect(page).to have_field("Message", visible: :all)
+    end
+
+    it "eagerly loads the optimized primary hero and lazily loads listing images" do
+      building = create(:building, name: "Image House")
+      listing = create(:apartment_listing, building:, unit_number: "4A")
+      attach_test_image(building, :cover_image, filename: "cover.jpg")
+      attach_test_image(listing, :photo, filename: "listing.jpg")
+
+      get building_path(building)
+
+      page = Capybara.string(response.body)
+      hero = page.find(".building-hero__image")
+      listing_image = page.find(".listing-card__image")
+
+      expect(hero[:loading]).to eq("eager")
+      expect(hero[:fetchpriority]).to eq("high")
+      expect(hero[:width]).to eq("1800")
+      expect(hero[:height]).to eq("1000")
+      expect(listing_image[:loading]).to eq("lazy")
+      expect(listing_image[:width]).to eq("700")
+      expect(listing_image[:height]).to eq("560")
     end
 
     it "renders a visible map fallback when coordinates are missing" do
