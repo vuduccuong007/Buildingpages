@@ -31,8 +31,21 @@ only the values needed for the local environment.
 PostgreSQL data and Active Storage uploads are persisted in the
 `postgres_data` and `active_storage` named volumes.
 
-## Tests
+## Tests and code quality
+
+Run the standard checks locally from an environment with the bundle installed:
 
 ```sh
-docker compose run --rm web bin/rails test
+bundle exec rspec
+bin/rubocop
+bin/brakeman --no-pager
+```
+
+With Docker Compose, use:
+
+```sh
+docker compose run --rm -e RAILS_ENV=test web bin/rails db:prepare
+docker compose run --rm web bundle exec rspec
+docker compose run --rm web bin/rubocop
+docker compose run --rm web bin/brakeman --no-pager
 ```
