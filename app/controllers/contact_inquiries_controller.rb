@@ -6,6 +6,8 @@ class ContactInquiriesController < ApplicationController
     @contact_inquiry = listing.contact_inquiries.build(contact_inquiry_params)
 
     if @contact_inquiry.save
+      ContactInquiryMailer.with(inquiry: @contact_inquiry).new_inquiry.deliver_now
+
       redirect_to(
         building_path(listing.building, anchor: "apartment-listing-#{listing.id}"),
         notice: "Thanks! Your inquiry for unit #{listing.unit_number} has been received."

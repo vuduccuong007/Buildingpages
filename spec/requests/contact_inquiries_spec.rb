@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.describe "Contact inquiries", type: :request do
   describe "POST /contact_inquiries" do
+    before { ActionMailer::Base.deliveries.clear }
+
     let(:building) { create(:building, slug: "one-sutton-place") }
     let(:listing) do
       create(
@@ -28,11 +30,15 @@ RSpec.describe "Contact inquiries", type: :request do
                contact_inquiry: valid_attributes
              }
       end.to change(ContactInquiry, :count).by(1)
+        .and change { ActionMailer::Base.deliveries.count }.by(1)
 
       inquiry = ContactInquiry.order(:created_at).last
 
       expect(inquiry.apartment_listing).to eq(listing)
       expect(inquiry).to have_attributes(valid_attributes)
+      expect(ActionMailer::Base.deliveries.last.to).to eq(
+        [ ENV.fetch("CONTACT_RECIPIENT_EMAIL", "leasing@example.test") ]
+      )
     end
 
     it "redirects to the selected listing's building slug and preserves the listing anchor" do
@@ -61,6 +67,7 @@ RSpec.describe "Contact inquiries", type: :request do
       end.not_to change(ContactInquiry, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
+      expect(ActionMailer::Base.deliveries).to be_empty
     end
 
     it "preserves submitted values and reopens the dialog after validation failure" do

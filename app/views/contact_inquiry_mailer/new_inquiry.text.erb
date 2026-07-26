@@ -1,0 +1,13 @@
+New apartment inquiry
+
+Building: <%= @building.name %>
+Address: <%= @building.full_address %>
+Unit: <%= @listing.unit_number %>
+Transaction type: <%= @listing.transaction_type.humanize %>
+Price: <%= @formatted_price %>
+Name: <%= @inquiry.name %>
+Email: <%= @inquiry.email %>
+<% if @inquiry.phone.present? %>Phone: <%= @inquiry.phone %>
+<% end %>
+Message:
+<%= @inquiry.message %>

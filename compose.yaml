@@ -30,6 +30,10 @@ services:
       DATABASE_NAME: ${DATABASE_NAME:-building_pages_development}
       TEST_DATABASE_NAME: ${TEST_DATABASE_NAME:-building_pages_test}
       RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-5}
+      MAILER_FROM: ${MAILER_FROM:-building-pages@example.test}
+      CONTACT_RECIPIENT_EMAIL: ${CONTACT_RECIPIENT_EMAIL:-leasing@example.test}
+      APP_HOST: ${APP_HOST:-localhost}
+      APP_PORT: ${APP_PORT:-3000}
     volumes:
       - .:/rails
       - active_storage:/rails/storage

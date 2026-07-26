@@ -1,0 +1,32 @@
+<h1>New apartment inquiry</h1>
+
+<dl>
+  <dt>Building</dt>
+  <dd><%= @building.name %></dd>
+
+  <dt>Address</dt>
+  <dd><%= @building.full_address %></dd>
+
+  <dt>Unit</dt>
+  <dd><%= @listing.unit_number %></dd>
+
+  <dt>Transaction type</dt>
+  <dd><%= @listing.transaction_type.humanize %></dd>
+
+  <dt>Price</dt>
+  <dd><%= @formatted_price %></dd>
+
+  <dt>Name</dt>
+  <dd><%= @inquiry.name %></dd>
+
+  <dt>Email</dt>
+  <dd><%= mail_to @inquiry.email %></dd>
+
+  <% if @inquiry.phone.present? %>
+    <dt>Phone</dt>
+    <dd><%= @inquiry.phone %></dd>
+  <% end %>
+
+  <dt>Message</dt>
+  <dd><%= simple_format @inquiry.message %></dd>
+</dl>

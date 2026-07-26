@@ -31,6 +31,15 @@ only the values needed for the local environment.
 PostgreSQL data and Active Storage uploads are persisted in the
 `postgres_data` and `active_storage` named volumes.
 
+Successful apartment inquiries are delivered to Letter Opener in development.
+After submitting an inquiry, open <http://localhost:3000/letter_opener> to view
+the generated HTML and plain-text email. Letter Opener stores messages for
+local viewing and does not launch a browser from the Docker container.
+
+Production deployments should generally deliver inquiry emails through a
+background job rather than blocking the request. Queue infrastructure is not
+included in this local demonstration.
+
 ## Tests and code quality
 
 Run the standard checks locally from an environment with the bundle installed:
