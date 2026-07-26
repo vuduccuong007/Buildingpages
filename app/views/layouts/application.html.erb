@@ -27,6 +27,12 @@
   <body data-controller="navigation">
     <%= render "shared/header" %>
 
+    <% flash.each do |type, message| %>
+      <div class="flash flash--<%= type %>" role="status">
+        <%= message %>
+      </div>
+    <% end %>
+
     <main id="main-content">
       <%= yield %>
     </main>

@@ -90,7 +90,7 @@ RSpec.describe "Buildings", type: :request do
 
     it "renders active rentals in the rental section" do
       building = create(:building)
-      create(
+      listing = create(
         :apartment_listing,
         building:,
         transaction_type: :rent,
@@ -111,6 +111,11 @@ RSpec.describe "Buildings", type: :request do
       expect(rental_section).to have_text("Monthly")
       expect(rental_section).to have_text("Studio")
       expect(rental_section.text).to match(/1\.5\s+Bathrooms/)
+      expect(rental_section).to have_button("Schedule a Visit", disabled: false)
+      expect(rental_section).to have_link("Use inquiry form", href: "#contact-inquiry-form")
+      expect(rental_section).to have_css(
+        "button[data-contact-inquiry-listing-id-param='#{listing.id}']"
+      )
     end
 
     it "renders active sales in the sale section without a monthly label" do
@@ -196,6 +201,23 @@ RSpec.describe "Buildings", type: :request do
       get "/buildings/not-a-building"
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it "renders one progressively enhanced inquiry dialog for all listings" do
+      building = create(:building)
+      create_list(:apartment_listing, 2, building:)
+
+      get building_path(building)
+
+      page = Capybara.string(response.body)
+
+      expect(page).to have_css("dialog#contact-inquiry-form", count: 1)
+      expect(page).to have_css("dialog#contact-inquiry-form[open]")
+      expect(page).to have_css("noscript select[name='apartment_listing_id']")
+      expect(page).to have_field("Name", visible: :all)
+      expect(page).to have_field("Email", visible: :all)
+      expect(page).to have_field("Phone (optional)", visible: :all)
+      expect(page).to have_field("Message", visible: :all)
     end
 
     it "renders a visible map fallback when coordinates are missing" do

@@ -1,0 +1,144 @@
+<dialog
+  class="contact-dialog"
+  id="contact-inquiry-form"
+  open
+  data-contact-inquiry-target="dialog"
+>
+  <div class="contact-dialog__header">
+    <div>
+      <p class="contact-dialog__eyebrow">Schedule a Visit</p>
+      <h2>Contact us about an apartment</h2>
+    </div>
+    <button
+      class="contact-dialog__close"
+      type="button"
+      aria-label="Close contact form"
+      data-action="contact-inquiry#close"
+    >
+      &times;
+    </button>
+  </div>
+
+  <% if @contact_inquiry.errors.any? %>
+    <div class="contact-form__error-summary" role="alert" aria-labelledby="contact-inquiry-error-heading">
+      <h3 id="contact-inquiry-error-heading">
+        Please correct <%= pluralize(@contact_inquiry.errors.count, "error") %>
+      </h3>
+      <ul>
+        <% @contact_inquiry.errors.each do |error| %>
+          <li>
+            <a href="#contact-inquiry-<%= error.attribute %>"><%= error.full_message %></a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: @contact_inquiry,
+                url: contact_inquiries_path,
+                class: "contact-form" do |form| %>
+    <%= hidden_field_tag :apartment_listing_id,
+                         @selected_listing&.id,
+                         disabled: true,
+                         data: { contact_inquiry_target: "listingId" } %>
+
+    <noscript>
+      <div class="contact-form__field">
+        <%= label_tag :apartment_listing_id_fallback, "Selected apartment unit" %>
+        <%= select_tag :apartment_listing_id,
+                       options_from_collection_for_select(
+                         @building.active_apartment_listings,
+                         :id,
+                         :unit_number,
+                         @selected_listing&.id
+                       ),
+                       id: "apartment_listing_id_fallback",
+                       required: true %>
+      </div>
+    </noscript>
+
+    <div class="contact-form__selection" aria-live="polite">
+      <span>Selected apartment unit</span>
+      <strong data-contact-inquiry-target="unit">
+        <%= @selected_listing ? @selected_listing.unit_number : "Choose a unit above" %>
+      </strong>
+    </div>
+
+    <div class="contact-form__field">
+      <%= form.label :name, "Name", for: "contact-inquiry-name" %>
+      <%= form.text_field :name,
+                          required: true,
+                          autocomplete: "name",
+                          id: "contact-inquiry-name",
+                          aria: {
+                            invalid: @contact_inquiry.errors[:name].any?,
+                            describedby: ("contact-inquiry-name-error" if @contact_inquiry.errors[:name].any?)
+                          } %>
+      <% if @contact_inquiry.errors[:name].any? %>
+        <div id="contact-inquiry-name-error">
+          <% @contact_inquiry.errors.full_messages_for(:name).each do |message| %>
+            <p class="contact-form__field-error"><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="contact-form__field">
+      <%= form.label :email, "Email", for: "contact-inquiry-email" %>
+      <%= form.email_field :email,
+                           required: true,
+                           autocomplete: "email",
+                           id: "contact-inquiry-email",
+                           aria: {
+                             invalid: @contact_inquiry.errors[:email].any?,
+                             describedby: ("contact-inquiry-email-error" if @contact_inquiry.errors[:email].any?)
+                           } %>
+      <% if @contact_inquiry.errors[:email].any? %>
+        <div id="contact-inquiry-email-error">
+          <% @contact_inquiry.errors.full_messages_for(:email).each do |message| %>
+            <p class="contact-form__field-error"><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="contact-form__field">
+      <%= form.label :phone, "Phone (optional)", for: "contact-inquiry-phone" %>
+      <%= form.telephone_field :phone,
+                               autocomplete: "tel",
+                               id: "contact-inquiry-phone",
+                               aria: {
+                                 invalid: @contact_inquiry.errors[:phone].any?,
+                                 describedby: ("contact-inquiry-phone-error" if @contact_inquiry.errors[:phone].any?)
+                               } %>
+      <% if @contact_inquiry.errors[:phone].any? %>
+        <div id="contact-inquiry-phone-error">
+          <% @contact_inquiry.errors.full_messages_for(:phone).each do |message| %>
+            <p class="contact-form__field-error"><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="contact-form__field">
+      <%= form.label :message, "Message", for: "contact-inquiry-message" %>
+      <%= form.text_area :message,
+                         required: true,
+                         rows: 5,
+                         id: "contact-inquiry-message",
+                         aria: {
+                           invalid: @contact_inquiry.errors[:message].any?,
+                           describedby: ("contact-inquiry-message-error" if @contact_inquiry.errors[:message].any?)
+                         } %>
+      <% if @contact_inquiry.errors[:message].any? %>
+        <div id="contact-inquiry-message-error">
+          <% @contact_inquiry.errors.full_messages_for(:message).each do |message| %>
+            <p class="contact-form__field-error"><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= form.submit "Send Inquiry", class: "button contact-form__submit" %>
+  <% end %>
+</dialog>

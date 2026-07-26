@@ -1,6 +1,10 @@
 <% content_for :title, "#{@building.name} | PM Company" %>
 
-<article class="building-detail">
+<article
+  class="building-detail"
+  data-controller="contact-inquiry"
+  data-contact-inquiry-open-value="<%= @contact_inquiry.errors.any? %>"
+>
   <section class="building-hero" aria-label="<%= "#{@building.name} exterior" %>">
     <% if @building.cover_image.attached? %>
       <%= image_tag @building.cover_image,
@@ -48,7 +52,7 @@
       <section class="listing-section" aria-labelledby="rental-listings-heading">
         <h2 id="rental-listings-heading" class="section-heading">Apartments for Rent</h2>
         <div class="listing-grid">
-          <%= render partial: "apartment_listing", collection: rental_listings %>
+          <%= render partial: "buildings/apartment_listing", collection: rental_listings %>
         </div>
       </section>
     <% end %>
@@ -57,7 +61,7 @@
       <section class="listing-section" aria-labelledby="sale-listings-heading">
         <h2 id="sale-listings-heading" class="section-heading">Apartments for Sale</h2>
         <div class="listing-grid">
-          <%= render partial: "apartment_listing", collection: sale_listings %>
+          <%= render partial: "buildings/apartment_listing", collection: sale_listings %>
         </div>
       </section>
     <% end %>
@@ -74,7 +78,7 @@
     <div class="policy-section">
       <h2 class="section-heading">General Policies</h2>
       <div class="policy-list">
-        <%= render partial: "policy",
+        <%= render partial: "buildings/policy",
                    collection: @policies_by_section.fetch("general", []) %>
       </div>
     </div>
@@ -82,9 +86,11 @@
     <div class="policy-section">
       <h2 class="section-heading">Additional Building Info</h2>
       <div class="policy-list">
-        <%= render partial: "policy",
+        <%= render partial: "buildings/policy",
                    collection: @policies_by_section.fetch("additional_information", []) %>
       </div>
     </div>
   </section>
+
+  <%= render "buildings/contact_inquiry_dialog" %>
 </article>

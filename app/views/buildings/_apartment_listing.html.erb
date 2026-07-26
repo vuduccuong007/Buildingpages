@@ -1,4 +1,4 @@
-<article class="listing-card">
+<article class="listing-card" id="apartment-listing-<%= apartment_listing.id %>">
   <div class="listing-card__media">
     <% if apartment_listing.photo.attached? %>
       <%= image_tag apartment_listing.photo,
@@ -44,10 +44,14 @@
     <button
       class="button listing-card__action"
       type="button"
-      disabled
-      aria-disabled="true"
+      data-action="contact-inquiry#open"
+      data-contact-inquiry-listing-id-param="<%= apartment_listing.id %>"
+      data-contact-inquiry-unit-param="<%= apartment_listing.unit_number %>"
     >
       Schedule a Visit
     </button>
+    <a class="listing-card__form-link" href="#contact-inquiry-form">
+      Use inquiry form
+    </a>
   </div>
 </article>
