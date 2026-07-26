@@ -7,6 +7,14 @@
       class="featured-gallery"
       aria-label="<%= "#{@featured_building.name} featured gallery" %>"
       data-controller="gallery"
+      data-gallery-interval-value="5000"
+      data-action="
+        mouseenter->gallery#pause
+        mouseleave->gallery#play
+        focusin->gallery#pause
+        focusout->gallery#play
+        visibilitychange@document->gallery#visibilityChanged
+      "
     >
       <% if gallery_images.many? %>
         <button
@@ -16,7 +24,9 @@
           aria-controls="featured-gallery-track"
           data-action="gallery#previous"
         >
-          <span aria-hidden="true">&lsaquo;</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m15.5 5-6.5 7 6.5 7" />
+          </svg>
         </button>
       <% end %>
 
@@ -62,7 +72,9 @@
           aria-controls="featured-gallery-track"
           data-action="gallery#next"
         >
-          <span aria-hidden="true">&rsaquo;</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m8.5 5 6.5 7-6.5 7" />
+          </svg>
         </button>
       <% end %>
     </section>

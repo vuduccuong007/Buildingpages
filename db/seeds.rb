@@ -26,6 +26,7 @@ module DemoSeeds
         galleries/galleries-02.jpg
         galleries/galleries-03.jpg
         galleries/galleries-04.jpg
+        galleries/galleries-05.jpg
       ],
       year_built: 1928,
       residences: 46,

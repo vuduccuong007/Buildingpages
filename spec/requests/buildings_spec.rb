@@ -76,6 +76,9 @@ RSpec.describe "Buildings", type: :request do
       building_image = page.find(".building-card__image")
 
       expect(page).to have_css("#featured-gallery-track[tabindex='0']")
+      expect(page).to have_css(
+        ".featured-gallery[data-controller='gallery'][data-gallery-interval-value='5000']"
+      )
       expect(page).to have_css("button[aria-label='View previous gallery image']")
       expect(page).to have_css("button[aria-label='View next gallery image']")
       expect(primary_gallery_image[:loading]).to eq("eager")
