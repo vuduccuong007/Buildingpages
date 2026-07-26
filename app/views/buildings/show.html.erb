@@ -1,8 +1,90 @@
 <% content_for :title, "#{@building.name} | PM Company" %>
 
 <article class="building-detail">
-  <p class="building-detail__back"><%= link_to "← All Buildings", buildings_path %></p>
-  <h1><%= @building.name %></h1>
-  <p class="building-detail__neighborhood"><%= @building.neighborhood %></p>
-  <p><%= @building.description %></p>
+  <section class="building-hero" aria-label="<%= "#{@building.name} exterior" %>">
+    <% if @building.cover_image.attached? %>
+      <%= image_tag @building.cover_image,
+                    alt: "#{@building.name} exterior",
+                    class: "building-hero__image" %>
+    <% else %>
+      <div class="building-hero__placeholder" role="img" aria-label="<%= "#{@building.name} image unavailable" %>">
+        <span>Image unavailable</span>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="building-description" aria-labelledby="building-description-heading">
+    <h1 id="building-description-heading"><%= @building.name %></h1>
+    <p class="building-description__address"><%= @building.full_address %></p>
+    <% if @building.description.present? %>
+      <div class="building-description__copy">
+        <%= simple_format(@building.description) %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="building-map" aria-labelledby="building-map-heading">
+    <h2 id="building-map-heading" class="section-heading">Location</h2>
+    <% if (map_url = building_map_embed_url(@building)) %>
+      <iframe
+        class="building-map__frame"
+        src="<%= map_url %>"
+        title="<%= "#{@building.name} map" %>"
+        loading="lazy"
+      ></iframe>
+    <% else %>
+      <div class="building-map__fallback" role="status">
+        <p>Map unavailable for this building.</p>
+        <p><%= @building.full_address %></p>
+      </div>
+    <% end %>
+  </section>
+
+  <div class="building-inventory">
+    <% rental_listings = @listings_by_transaction_type.fetch("rent", []) %>
+    <% sale_listings = @listings_by_transaction_type.fetch("sale", []) %>
+
+    <% if rental_listings.any? %>
+      <section class="listing-section" aria-labelledby="rental-listings-heading">
+        <h2 id="rental-listings-heading" class="section-heading">Apartments for Rent</h2>
+        <div class="listing-grid">
+          <%= render partial: "apartment_listing", collection: rental_listings %>
+        </div>
+      </section>
+    <% end %>
+
+    <% if sale_listings.any? %>
+      <section class="listing-section" aria-labelledby="sale-listings-heading">
+        <h2 id="sale-listings-heading" class="section-heading">Apartments for Sale</h2>
+        <div class="listing-grid">
+          <%= render partial: "apartment_listing", collection: sale_listings %>
+        </div>
+      </section>
+    <% end %>
+
+    <% if rental_listings.empty? && sale_listings.empty? %>
+      <section class="inventory-empty" aria-labelledby="inventory-empty-heading">
+        <h2 id="inventory-empty-heading" class="section-heading">Available Apartments</h2>
+        <p>There are no active apartment listings at this time.</p>
+      </section>
+    <% end %>
+  </div>
+
+  <section class="building-policies" aria-label="Building policies">
+    <div class="policy-section">
+      <h2 class="section-heading">General Policies</h2>
+      <div class="policy-list">
+        <%= render partial: "policy",
+                   collection: @policies_by_section.fetch("general", []) %>
+      </div>
+    </div>
+
+    <div class="policy-section">
+      <h2 class="section-heading">Additional Building Info</h2>
+      <div class="policy-list">
+        <%= render partial: "policy",
+                   collection: @policies_by_section.fetch("additional_information", []) %>
+      </div>
+    </div>
+  </section>
 </article>

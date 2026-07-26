@@ -1,0 +1,9 @@
+<article class="policy">
+  <h3><%= policy.title %></h3>
+  <% if policy.details.present? %>
+    <%= simple_format(policy.details, class: "policy__details") %>
+  <% end %>
+  <% if policy.note.present? %>
+    <%= simple_format(policy.note, class: "policy__note") %>
+  <% end %>
+</article>

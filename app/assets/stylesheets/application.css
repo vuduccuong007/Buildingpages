@@ -140,6 +140,42 @@ img {
   stroke-width: 1.5;
 }
 
+.site-header__building {
+  position: absolute;
+  right: 0;
+  max-width: calc(50% - 3rem);
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.site-header__building p {
+  margin: 0;
+}
+
+.site-header__building-name {
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.site-header__building-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.85rem;
+  justify-content: flex-end;
+  margin-top: 0.3rem !important;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.site-header__building-meta span + span::before {
+  margin-right: 0.85rem;
+  content: "/";
+}
+
 .navigation-drawer {
   position: absolute;
   top: 100%;
@@ -348,23 +384,265 @@ img {
 }
 
 .building-detail {
-  min-height: 60vh;
-  padding-block: var(--space-6);
-  border-top: 1px solid var(--color-border);
+  min-width: 0;
 }
 
-.building-detail h1 {
-  margin-block: var(--space-4) var(--space-1);
-  font-size: clamp(2rem, 5vw, 4rem);
+.building-hero {
+  width: 100%;
+  height: clamp(320px, 52vw, 650px);
+  overflow: hidden;
+  background: #e8e8e5;
 }
 
-.building-detail__back a {
-  text-underline-offset: 0.2em;
+.building-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.building-detail__neighborhood {
+.building-hero__placeholder,
+.listing-card__placeholder {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
   color: var(--color-text-muted);
+  background: #eeeeeb;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.building-description {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.7fr) minmax(0, 1.8fr);
+  gap: clamp(2rem, 8vw, 8rem);
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.building-description h1 {
+  margin: 0;
+  font-size: clamp(1.65rem, 3vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.02;
+}
+
+.building-description__address {
+  margin: var(--space-3) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.055em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.building-description__copy {
+  align-self: center;
+  max-width: 44rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 2.4vw, 1.85rem);
+  line-height: 1.55;
+}
+
+.building-description__copy p {
+  margin: 0;
+}
+
+.section-heading {
+  margin: 0;
+  padding: 0.65rem 0 0.8rem;
+  border-top: 1px solid var(--color-border);
+  color: #414140;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.building-map {
+  padding-top: clamp(3.5rem, 7vw, 6rem);
+}
+
+.building-map__frame {
+  display: block;
+  width: 100%;
+  height: clamp(320px, 43vw, 530px);
+  border: 0;
+  background: #e8e8e5;
+}
+
+.building-map__fallback {
+  display: grid;
+  min-height: clamp(260px, 38vw, 430px);
+  padding: 2rem;
+  place-content: center;
+  border: 1px solid var(--color-border);
+  background: #eeeeeb;
+  text-align: center;
+}
+
+.building-map__fallback p {
+  margin: 0;
+}
+
+.building-map__fallback p:first-child {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+.building-map__fallback p + p {
+  margin-top: 0.7rem;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.building-inventory,
+.building-policies {
+  margin-top: clamp(3.5rem, 8vw, 7rem);
+}
+
+.listing-section + .listing-section {
+  margin-top: clamp(3.5rem, 6vw, 5.5rem);
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.35rem;
+}
+
+.listing-card {
+  display: grid;
+  grid-template-columns: minmax(0, 43%) minmax(0, 57%);
+  min-height: 210px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.listing-card__media {
+  min-width: 0;
+  min-height: 210px;
+  overflow: hidden;
+  background: #e8e8e5;
+}
+
+.listing-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.listing-card__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0.75rem 0.9rem 0.9rem;
+}
+
+.listing-card__unit {
+  margin: 0;
+  color: #414140;
+  font-size: clamp(2rem, 5vw, 3.35rem);
+  font-weight: 600;
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.listing-card__price {
+  margin: 1rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.listing-card__cadence {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--color-text-muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.listing-card__rooms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.5rem;
+  margin: 0.8rem 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.listing-card__action {
+  border: 0;
+  cursor: not-allowed;
+}
+
+.listing-card__action:disabled {
+  opacity: 1;
+}
+
+.inventory-empty p {
+  margin: 0;
+  padding: 3.5rem 1rem;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  text-align: center;
+}
+
+.building-policies {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 7vw, 7rem);
+}
+
+.policy-section .section-heading {
+  padding: 0.8rem 1rem;
+  border-top-color: #414140;
+  color: #fff;
+  background: #4e4e4c;
+  font-size: 1rem;
+  letter-spacing: 0.025em;
+}
+
+.policy {
+  padding: 1.25rem 0.35rem 1.4rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.policy h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.policy__details,
+.policy__note {
+  margin: 0.55rem 0 0;
+}
+
+.policy__details {
+  line-height: 1.55;
+}
+
+.policy__note {
+  color: var(--color-text-muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.45;
 }
 
 .site-footer {
@@ -415,9 +693,29 @@ img {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+
+  .site-header__building {
+    max-width: calc(50% - 2rem);
+  }
+
+  .listing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .listing-card {
+    min-height: 230px;
+  }
+
+  .listing-card__media {
+    min-height: 230px;
+  }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 680px) {
+  :root {
+    --header-height: 138px;
+  }
+
   .site-header__inner,
   .portfolio,
   .building-detail,
@@ -428,6 +726,28 @@ img {
   .site-logo {
     width: 36px;
     height: 46px;
+    transform: translateY(-22px);
+  }
+
+  .menu-button {
+    top: 22px;
+  }
+
+  .site-header__building {
+    right: 0;
+    bottom: 12px;
+    left: 0;
+    max-width: none;
+    text-align: center;
+  }
+
+  .site-header__building-name {
+    font-size: 1rem;
+  }
+
+  .site-header__building-meta {
+    justify-content: center;
+    font-size: 0.65rem;
   }
 
   .menu-button span {
@@ -492,6 +812,65 @@ img {
   .site-footer {
     margin-top: 4rem;
     padding-top: 2rem;
+  }
+
+  .building-hero {
+    height: clamp(280px, 80vw, 430px);
+  }
+
+  .building-description {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .building-description__copy {
+    font-size: 1.2rem;
+  }
+
+  .building-map__frame {
+    height: 340px;
+  }
+
+  .listing-card {
+    grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+    min-height: 190px;
+  }
+
+  .listing-card__media {
+    min-height: 190px;
+  }
+
+  .listing-card__content {
+    padding: 0.65rem;
+  }
+
+  .listing-card__unit {
+    font-size: clamp(1.75rem, 10vw, 2.6rem);
+  }
+
+  .listing-card__price {
+    margin-top: 0.65rem;
+    font-size: 0.95rem;
+  }
+
+  .listing-card__rooms {
+    display: grid;
+    gap: 0.15rem;
+    margin-block: 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .listing-card__rooms > [aria-hidden="true"] {
+    display: none;
+  }
+
+  .listing-card__action {
+    white-space: normal;
+  }
+
+  .building-policies {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
   }
 }
 

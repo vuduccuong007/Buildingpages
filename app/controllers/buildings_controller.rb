@@ -8,6 +8,15 @@ class BuildingsController < ApplicationController
   end
 
   def show
-    @building = Building.find_by!(slug: params[:slug])
+    @building = Building
+      .includes(
+        :policies,
+        cover_image_attachment: :blob,
+        active_apartment_listings: { photo_attachment: :blob }
+      )
+      .find_by!(slug: params[:slug])
+
+    @listings_by_transaction_type = @building.active_apartment_listings.group_by(&:transaction_type)
+    @policies_by_section = @building.policies.group_by(&:section)
   end
 end

@@ -1,0 +1,53 @@
+<article class="listing-card">
+  <div class="listing-card__media">
+    <% if apartment_listing.photo.attached? %>
+      <%= image_tag apartment_listing.photo,
+                    alt: "#{@building.name} apartment #{apartment_listing.unit_number}",
+                    class: "listing-card__image",
+                    loading: "lazy" %>
+    <% else %>
+      <div class="listing-card__placeholder" role="img" aria-label="Apartment image unavailable">
+        <span>Image unavailable</span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="listing-card__content">
+    <div>
+      <h3 class="listing-card__unit"><%= apartment_listing.unit_number %></h3>
+      <p class="listing-card__price">
+        <%= number_to_currency(
+              apartment_listing.price_cents / 100.0,
+              precision: apartment_listing.price_cents.remainder(100).zero? ? 0 : 2
+            ) %>
+        <% if apartment_listing.rent? %>
+          <span class="listing-card__cadence">Monthly</span>
+        <% end %>
+      </p>
+      <p class="listing-card__rooms">
+        <span>
+          <% if apartment_listing.bedrooms.zero? %>
+            Studio
+          <% else %>
+            <%= formatted_room_count(apartment_listing.bedrooms) %>
+            <%= apartment_listing.bedrooms == 1 ? "Bedroom" : "Bedrooms" %>
+          <% end %>
+        </span>
+        <span aria-hidden="true">/</span>
+        <span>
+          <%= formatted_room_count(apartment_listing.bathrooms) %>
+          <%= apartment_listing.bathrooms == 1 ? "Bathroom" : "Bathrooms" %>
+        </span>
+      </p>
+    </div>
+
+    <button
+      class="button listing-card__action"
+      type="button"
+      disabled
+      aria-disabled="true"
+    >
+      Schedule a Visit
+    </button>
+  </div>
+</article>

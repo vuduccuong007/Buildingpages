@@ -26,6 +26,18 @@
         <path class="site-logo__accent" d="M21 53 29 45M21 49l4-4M25 56l4-4" />
       </svg>
     <% end %>
+
+    <% if defined?(@building) && @building.present? %>
+      <div class="site-header__building">
+        <p class="site-header__building-name"><%= @building.name %></p>
+        <p class="site-header__building-meta">
+          <span><%= building_header_location(@building) %></span>
+          <% if @building.ownership_type.present? %>
+            <span><%= @building.ownership_type %></span>
+          <% end %>
+        </p>
+      </div>
+    <% end %>
   </div>
 
   <nav
