@@ -3,7 +3,9 @@ Rails.application.routes.draw do
 
   root "buildings#index"
 
-  resources :buildings, only: %i[index show], param: :slug
+  resources :buildings, only: %i[index show], param: :slug do
+    get :autocomplete, on: :collection
+  end
   resources :contact_inquiries, only: :create
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

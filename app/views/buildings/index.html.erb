@@ -38,7 +38,40 @@
     </section>
 
     <section class="buildings-section" aria-labelledby="rental-buildings-heading">
-      <h1 id="rental-buildings-heading">Rental Buildings</h1>
+      <div class="buildings-section__header">
+        <h1 id="rental-buildings-heading">Rental Buildings</h1>
+
+        <div
+          class="building-search"
+          data-controller="building-autocomplete"
+          data-building-autocomplete-url-value="<%= autocomplete_buildings_path %>"
+          data-action="focusout->building-autocomplete#focusOut"
+        >
+          <label class="visually-hidden" for="building-search-input">Search rental buildings</label>
+          <input
+            id="building-search-input"
+            class="building-search__input"
+            type="search"
+            placeholder="Find a building"
+            autocomplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="building-autocomplete-results"
+            aria-expanded="false"
+            data-building-autocomplete-target="input"
+            data-action="input->building-autocomplete#search keydown->building-autocomplete#keydown"
+          >
+          <ul
+            id="building-autocomplete-results"
+            class="building-search__results"
+            role="listbox"
+            aria-label="Building search results"
+            aria-live="polite"
+            data-building-autocomplete-target="listbox"
+            hidden
+          ></ul>
+        </div>
+      </div>
 
       <div class="building-grid">
         <%= render partial: "building", collection: @buildings %>

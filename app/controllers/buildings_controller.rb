@@ -13,4 +13,27 @@ class BuildingsController < ApplicationController
     @contact_inquiry = ContactInquiry.new
     load_building_page(Building.where(slug: params[:slug]))
   end
+
+  def autocomplete
+    query = params[:q].to_s.strip
+    return render json: [] if query.length < 2
+
+    matches = Building
+      .autocomplete_search(query)
+      .ordered
+      .limit(8)
+
+    render json: matches.map { |building| autocomplete_result(building) }
+  end
+
+  private
+
+  def autocomplete_result(building)
+    {
+      name: building.name,
+      neighborhood: building.neighborhood,
+      full_address: building.full_address,
+      url: building_path(building)
+    }
+  end
 end

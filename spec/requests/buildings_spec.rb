@@ -51,6 +51,134 @@ RSpec.describe "Buildings", type: :request do
     end
   end
 
+  describe "GET /buildings/autocomplete" do
+    let(:results) { response.parsed_body }
+
+    it "returns no results for a query shorter than two characters" do
+      create(:building, name: "Park House")
+
+      get autocomplete_buildings_path, params: { q: " P " }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq([])
+    end
+
+    it "searches by building name" do
+      building = create(:building, name: "Park House")
+      create(:building, name: "River House")
+
+      get autocomplete_buildings_path, params: { q: "Park" }, as: :json
+
+      expect(results.pluck("name")).to eq([ building.name ])
+    end
+
+    it "searches by neighborhood" do
+      building = create(:building, neighborhood: "Lincoln Park")
+      create(:building, neighborhood: "River North")
+
+      get autocomplete_buildings_path, params: { q: "Lincoln" }, as: :json
+
+      expect(results.pluck("name")).to eq([ building.name ])
+    end
+
+    it "searches by street address" do
+      building = create(:building, street_address: "742 Evergreen Terrace")
+      create(:building, street_address: "123 Main Street")
+
+      get autocomplete_buildings_path, params: { q: "Evergreen" }, as: :json
+
+      expect(results.pluck("name")).to eq([ building.name ])
+    end
+
+    it "searches by city" do
+      building = create(:building, city: "Evanston")
+      create(:building, city: "Chicago")
+
+      get autocomplete_buildings_path, params: { q: "Evanston" }, as: :json
+
+      expect(results.pluck("name")).to eq([ building.name ])
+    end
+
+    it "searches case-insensitively" do
+      building = create(:building, name: "McKinley Court")
+
+      get autocomplete_buildings_path, params: { q: "mckinley" }, as: :json
+
+      expect(results.pluck("name")).to eq([ building.name ])
+    end
+
+    it "treats SQL wildcard characters as literal characters" do
+      percent_building = create(:building, name: "100% Plaza")
+      create(:building, name: "1000 Plaza")
+      underscore_building = create(:building, name: "Tower_One")
+      create(:building, name: "TowerXOne")
+
+      get autocomplete_buildings_path, params: { q: "100%" }, as: :json
+
+      expect(response.parsed_body.pluck("name")).to eq([ percent_building.name ])
+
+      get autocomplete_buildings_path, params: { q: "Tower_" }, as: :json
+
+      expect(response.parsed_body.pluck("name")).to eq([ underscore_building.name ])
+    end
+
+    it "does not interpret SQL injection payloads" do
+      create(:building, name: "Park House")
+
+      get autocomplete_buildings_path, params: { q: "' OR 1=1 --" }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(results).to eq([])
+    end
+
+    it "orders results by position and name" do
+      third = create(:building, name: "Search Alpha", position: 2)
+      second = create(:building, name: "Search Charlie", position: 1)
+      first = create(:building, name: "Search Bravo", position: 1)
+
+      get autocomplete_buildings_path, params: { q: "Search" }, as: :json
+
+      expect(results.pluck("name")).to eq([ first.name, second.name, third.name ])
+    end
+
+    it "limits the response to eight buildings" do
+      create_list(:building, 9, neighborhood: "Search District")
+
+      get autocomplete_buildings_path, params: { q: "Search District" }, as: :json
+
+      expect(results.length).to eq(8)
+    end
+
+    it "returns only public autocomplete fields" do
+      building = create(
+        :building,
+        name: "Park House",
+        neighborhood: "Lincoln Park",
+        street_address: "500 Park Avenue"
+      )
+
+      get autocomplete_buildings_path, params: { q: "Park" }, as: :json
+
+      expect(results).to contain_exactly(
+        {
+          "name" => building.name,
+          "neighborhood" => building.neighborhood,
+          "full_address" => building.full_address,
+          "url" => building_path(building)
+        }
+      )
+    end
+
+    it "returns an empty array when no buildings match" do
+      create(:building, name: "Park House")
+
+      get autocomplete_buildings_path, params: { q: "No such building" }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(results).to eq([])
+    end
+  end
+
   describe "GET /buildings/:slug" do
     it "finds a building by slug" do
       building = create(:building, name: "One Sutton Place", slug: "one-sutton-place")
