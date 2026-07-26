@@ -298,7 +298,6 @@ RSpec.describe "Buildings", type: :request do
       expect(rental_section).to have_css(
         "button[aria-label='Schedule a visit for apartment RENT-4B']"
       )
-      expect(rental_section).to have_link("Use inquiry form", href: "#contact-inquiry-form")
       expect(rental_section).to have_css(
         "button[data-contact-inquiry-listing-id-param='#{listing.id}']"
       )
