@@ -1,0 +1,28 @@
+#!/bin/sh
+set -eu
+
+# Prevent a previous unclean shutdown from blocking Puma on the next start.
+rm -f /rails/tmp/pids/server.pid
+
+# Compose also gates startup on the database healthcheck. This explicit check
+# keeps the image safe when it is run outside Compose or with a one-off command.
+if [ -n "${DATABASE_HOST:-}" ]; then
+  attempts=0
+  until pg_isready \
+    --host="${DATABASE_HOST}" \
+    --port="${DATABASE_PORT:-5432}" \
+    --username="${DATABASE_USERNAME:-postgres}" \
+    --dbname="${DATABASE_NAME:-building_pages_development}" >/dev/null 2>&1
+  do
+    attempts=$((attempts + 1))
+    if [ "${attempts}" -ge 30 ]; then
+      echo "PostgreSQL did not become ready after 30 attempts." >&2
+      exit 1
+    fi
+
+    echo "Waiting for PostgreSQL at ${DATABASE_HOST}:${DATABASE_PORT:-5432}..."
+    sleep 1
+  done
+fi
+
+exec "$@"

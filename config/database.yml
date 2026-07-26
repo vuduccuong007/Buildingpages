@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5432) %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", "postgres") %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME", "building_pages_development") %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("TEST_DATABASE_NAME", "building_pages_test") %>
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: <%= ENV.fetch("DATABASE_NAME", "building_pages_production") %>
+  cache:
+    <<: *primary_production
+    database: <%= ENV.fetch("CACHE_DATABASE_NAME", "building_pages_production_cache") %>
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: <%= ENV.fetch("QUEUE_DATABASE_NAME", "building_pages_production_queue") %>
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: <%= ENV.fetch("CABLE_DATABASE_NAME", "building_pages_production_cable") %>
+    migrations_paths: db/cable_migrate
