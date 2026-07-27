@@ -1,0 +1,16 @@
+<div
+  id="building-pagination"
+  class="building-pagination"
+  data-infinite-scroll-target="sentinel"
+  <% if next_page %>
+    data-next-page-url="<%= buildings_path(page: next_page) %>"
+  <% else %>
+    hidden
+  <% end %>
+>
+  <% if next_page %>
+    <p data-infinite-scroll-target="status" role="status" aria-live="polite">
+      Scroll to load more buildings
+    </p>
+  <% end %>
+</div>

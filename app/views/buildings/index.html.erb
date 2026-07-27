@@ -2,7 +2,7 @@
 
 <div class="portfolio">
   <% if @buildings.any? %>
-    <% gallery_images = @featured_building.gallery_images.first(4) %>
+    <% gallery_images = @featured_building.gallery_images %>
     <section
       class="featured-gallery"
       aria-label="<%= "#{@featured_building.name} featured gallery" %>"
@@ -79,7 +79,11 @@
       <% end %>
     </section>
 
-    <section class="buildings-section" aria-labelledby="rental-buildings-heading">
+    <section
+      class="buildings-section"
+      aria-labelledby="rental-buildings-heading"
+      data-controller="infinite-scroll"
+    >
       <div class="buildings-section__header">
         <h1 id="rental-buildings-heading">Rental Buildings</h1>
 
@@ -115,9 +119,11 @@
         </div>
       </div>
 
-      <div class="building-grid">
+      <div id="building-list" class="building-grid">
         <%= render partial: "building", collection: @buildings %>
       </div>
+
+      <%= render "pagination", next_page: @next_page %>
     </section>
   <% else %>
     <section class="portfolio-empty" aria-labelledby="portfolio-empty-heading">

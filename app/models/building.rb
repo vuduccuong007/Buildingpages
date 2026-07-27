@@ -17,7 +17,7 @@ class Building < ApplicationRecord
 
   before_validation :generate_slug, if: -> { slug.blank? }
 
-  scope :ordered, -> { order(:position, :name) }
+  scope :ordered, -> { order(:position, :name, :id) }
 
   def self.autocomplete_search(query)
     ransack(AUTOCOMPLETE_SEARCH_PREDICATE => query).result

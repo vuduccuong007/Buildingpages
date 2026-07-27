@@ -391,6 +391,28 @@ img {
   gap: 3rem clamp(2rem, 8vw, 10rem);
 }
 
+.building-pagination {
+  min-height: 3rem;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.building-pagination[hidden] {
+  display: none;
+}
+
+.building-pagination__retry {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .building-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(205px, 1.05fr);

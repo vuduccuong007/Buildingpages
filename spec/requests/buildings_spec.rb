@@ -31,6 +31,48 @@ RSpec.describe "Buildings", type: :request do
       expect(response.body.index(first.name)).to be < response.body.index(second.name)
     end
 
+    it "renders only the first page and exposes the next page URL" do
+      buildings = Array.new(7) do |index|
+        create(:building, name: "Paginated Building #{index + 1}", position: index + 1)
+      end
+
+      get buildings_path
+
+      page = Capybara.string(response.body)
+
+      expect(page).to have_css("#building-list .building-card", count: 6)
+      expect(page).to have_text(buildings.first.name)
+      expect(page).not_to have_text(buildings.last.name)
+      expect(page).to have_css(
+        "#building-pagination[data-next-page-url='#{buildings_path(page: 2)}']"
+      )
+    end
+
+    it "appends only the requested page in a Turbo Stream response" do
+      buildings = Array.new(7) do |index|
+        create(:building, name: "Streamed Building #{index + 1}", position: index + 1)
+      end
+
+      get buildings_path,
+          params: { page: 2 },
+          headers: { "ACCEPT" => Mime[:turbo_stream].to_s }
+
+      page = Capybara.string(response.body)
+      append_stream = page.find("turbo-stream[action='append'][target='building-list']")
+      replace_stream = page.find(
+        "turbo-stream[action='replace'][target='building-pagination']"
+      )
+
+      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      expect(append_stream).to be_present
+      expect(replace_stream).to be_present
+      expect(response.body).to include(buildings.last.name)
+      expect(response.body).not_to include(buildings.first.name)
+      expect(response.body).to match(
+        /target="building-pagination".*id="building-pagination".*hidden/m
+      )
+    end
+
     it "links each building with its slug" do
       building = create(:building, name: "One Sutton Place", slug: "one-sutton-place")
 

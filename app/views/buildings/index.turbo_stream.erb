@@ -1,0 +1,7 @@
+<%= turbo_stream.append "building-list" do %>
+  <%= render partial: "building", collection: @buildings %>
+<% end %>
+
+<%= turbo_stream.replace "building-pagination" do %>
+  <%= render "pagination", next_page: @next_page %>
+<% end %>

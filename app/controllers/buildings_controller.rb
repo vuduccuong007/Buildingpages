@@ -1,11 +1,20 @@
 class BuildingsController < ApplicationController
   include BuildingPageLoadable
 
+  BUILDINGS_PER_PAGE = 6
+
   def index
-    @buildings = Building.ordered
+    page = [ params.fetch(:page, 1).to_i, 1 ].max
+    buildings = Building.ordered
       .with_attached_cover_image
       .with_attached_gallery_images
+      .offset((page - 1) * BUILDINGS_PER_PAGE)
+      .limit(BUILDINGS_PER_PAGE + 1)
       .to_a
+
+    @has_next_page = buildings.length > BUILDINGS_PER_PAGE
+    @buildings = buildings.first(BUILDINGS_PER_PAGE)
+    @next_page = page + 1 if @has_next_page
     @featured_building = @buildings.first
   end
 
