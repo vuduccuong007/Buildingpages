@@ -229,9 +229,12 @@ img {
   overflow-x: auto;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
-  scrollbar-color: var(--color-border) transparent;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   overscroll-behavior-inline: contain;
+}
+
+.gallery-track::-webkit-scrollbar {
+  display: none;
 }
 
 .gallery-panel {

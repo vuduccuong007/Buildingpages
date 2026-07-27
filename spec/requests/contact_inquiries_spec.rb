@@ -102,7 +102,7 @@ RSpec.describe "Contact inquiries", type: :request do
       expect(page).to have_text("12A")
     end
 
-    it "returns 404 for an inactive listing" do
+    it "redirects an inactive listing to the 404 page" do
       inactive_listing = create(:apartment_listing, building:, status: :inactive)
 
       expect do
@@ -113,10 +113,10 @@ RSpec.describe "Contact inquiries", type: :request do
              }
       end.not_to change(ContactInquiry, :count)
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to redirect_to("/404.html")
     end
 
-    it "returns 404 for an unknown listing" do
+    it "redirects an unknown listing to the 404 page" do
       expect do
         post contact_inquiries_path,
              params: {
@@ -125,7 +125,7 @@ RSpec.describe "Contact inquiries", type: :request do
              }
       end.not_to change(ContactInquiry, :count)
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to redirect_to("/404.html")
     end
   end
 end

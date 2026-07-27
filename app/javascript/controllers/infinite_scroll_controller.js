@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { Turbo } from "@hotwired/turbo-rails"
+import { redirectOnError, redirectToErrorPage } from "error_redirect"
 
 export default class extends Controller {
   static targets = ["sentinel", "status"]
@@ -52,11 +53,11 @@ export default class extends Controller {
         signal: this.abortController.signal
       })
 
-      if (!response.ok) throw new Error(`Request failed with status ${response.status}`)
+      if (redirectOnError(response)) return
 
       Turbo.renderStreamMessage(await response.text())
     } catch (error) {
-      if (error.name !== "AbortError") this.showRetry()
+      if (error.name !== "AbortError") redirectToErrorPage()
     } finally {
       this.loading = false
       this.abortController = null

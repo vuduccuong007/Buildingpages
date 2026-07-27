@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { redirectOnError, redirectToErrorPage } from "error_redirect"
 
 const DEBOUNCE_DELAY = 275
 
@@ -68,7 +69,7 @@ export default class extends Controller {
         signal: this.abortController.signal
       })
 
-      if (!response.ok) throw new Error(`Autocomplete request failed: ${response.status}`)
+      if (redirectOnError(response)) return
 
       const results = await response.json()
       if (requestSequence !== this.requestSequence) return
@@ -76,7 +77,7 @@ export default class extends Controller {
       this.renderResults(results)
     } catch (error) {
       if (error.name !== "AbortError" && requestSequence === this.requestSequence) {
-        this.clearResults()
+        redirectToErrorPage()
       }
     }
   }
