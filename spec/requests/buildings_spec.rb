@@ -426,10 +426,15 @@ RSpec.describe "Buildings", type: :request do
       expect(additional).not_to have_text("First General")
     end
 
-    it "returns 404 for an unknown slug" do
+    it "redirects an unknown slug to the 404 page" do
       get "/buildings/not-a-building"
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to redirect_to("/404.html")
+
+      follow_redirect!
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("The page you were looking for doesn't exist")
     end
 
     it "renders one progressively enhanced inquiry dialog for all listings" do
